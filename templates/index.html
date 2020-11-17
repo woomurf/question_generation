@@ -1,0 +1,58 @@
+<html>
+    <head></head>
+    <body>
+        <h1>Question Generator</h1>
+
+        <textarea id="context" style="width:500px; height: 500px;"></textarea>
+        <button id="submit" onclick="generation()"> Generator</button>
+
+        <p id="result"></p>
+
+        <script>
+
+            function generation() {
+                var result = document.getElementById("result");
+                result.innerHTML = "";
+                
+                var context = document.getElementById("context").value;
+                
+                data = {
+                    "context": context
+                }
+                
+                headers = {"content-type": "applcation/json"}
+                fetch(
+                    "/generation",
+                    {
+                        method: "POST",
+                        body: JSON.stringify(data),
+                        headers                        
+                    }
+                )
+                .then(response => {
+                    if(response.status == 200){
+                        return response;
+                    }
+                    else{
+                        throw Error("error");
+                    }
+                })
+                .then(response => response.json())
+                .then(response => {
+                    console.log(response);
+                    response = response['result']
+                    var result_string = "";
+                    for (let index = 0; index < response.length; index++) {
+                        result_string += `answer : ${response[index]["answer"]}, question: ${response[index]["question"]}\n`
+                    }
+                    console.log(result_string);
+                    
+                    result.innerHTML = result_string;
+                })
+            }
+
+
+
+        </script>
+    </body>
+</html>
